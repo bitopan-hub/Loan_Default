@@ -50,6 +50,8 @@ def get_db_connection():
         print(f"Error while connecting to MySQL: {e}")
     return None
 
+import json
+
 # Load bundle
 try:
     config = joblib.load("loan_model_bundle.pkl")
@@ -64,6 +66,14 @@ except Exception as e:
     print(f"Error loading model: {e}")
     model = None
     explainer = None
+
+# Load feature ranges
+try:
+    with open("feature_ranges.json", "r") as f:
+        feature_ranges = json.load(f)
+except Exception as e:
+    print(f"Error loading feature ranges: {e}")
+    feature_ranges = None
 
 def get_risk_level(prob):
     if prob >= 0.7:
@@ -247,8 +257,9 @@ def predict():
     shap_values = explainer.shap_values(df)
     explanations = build_explanations(
         shap_values[0],
+        df.iloc[0].values,
         features,
-        df.iloc[0].values
+        feature_ranges
     )
     xai_output = build_xai_response(explanations)
 

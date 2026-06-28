@@ -60,6 +60,7 @@ def preprocess_data(df,stats):
     df['monthly_cash_flow'] =  df['income(M)'] - df['monthly_debt']
     df['util_debt_impact'] = df['util_ratio'] * df['monthly_debt']
     
-    df.drop(columns=['id'], inplace=True)
+    if 'id' in df.columns:
+        df.drop(columns=['id'], inplace=True)
 
     return df
